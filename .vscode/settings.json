@@ -4,5 +4,12 @@
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
   },
-  "cSpell.words": ["canva", "ellipsize", "nativewind", "Pressable"]
+  "cSpell.words": [
+    "canva",
+    "ellipsize",
+    "nativewind",
+    "Pressable",
+    "Recurrly",
+    "wordmark"
+  ]
 }
