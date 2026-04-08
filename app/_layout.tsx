@@ -1,10 +1,16 @@
 import "@/global.css";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
-import { useEffect } from "react";
+import {
+  SplashScreen,
+  Stack,
+  useGlobalSearchParams,
+  usePathname,
+} from "expo-router";
+import { useEffect, useRef } from "react";
 
 import { ClerkProvider, useAuth } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
+import { PostHogProvider, usePostHog } from "posthog-react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -16,6 +22,20 @@ if (!publishableKey) {
 
 function RootLayoutContent() {
   const { isLoaded: authLoaded } = useAuth();
+
+  const pathname = usePathname();
+  const posthog = usePostHog();
+  const params = useGlobalSearchParams();
+  const previousPathname = useRef<string | null>(undefined);
+
+  useEffect(() => {
+    if (previousPathname.current !== pathname) {
+      posthog.screen(pathname, {
+        previous_screen: previousPathname.current ?? null,
+        ...params,
+      });
+    }
+  }, [params, pathname, posthog]);
 
   const [fontsLoaded] = useFonts({
     "sans-regular": require("../assets/fonts/PlusJakartaSans-Regular.ttf"),
@@ -37,8 +57,13 @@ function RootLayoutContent() {
 
 export default function RootLayout() {
   return (
-    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <RootLayoutContent />
-    </ClerkProvider>
+    <PostHogProvider
+      apiKey={process.env.EXPO_PUBLIC_POSTHOG_KEY!}
+      options={{ host: process.env.EXPO_PUBLIC_POSTHOG_HOST }}
+    >
+      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+        <RootLayoutContent />
+      </ClerkProvider>
+    </PostHogProvider>
   );
 }
