@@ -14,8 +14,8 @@ export default function Settings() {
 
   const handleSignOut = async () => {
     posthog.capture("user_signed_out");
-    posthog.reset();
     await signOut();
+    posthog.reset();
   };
 
   const displayName =
