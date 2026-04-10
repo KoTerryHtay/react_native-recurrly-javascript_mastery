@@ -22,7 +22,7 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.jsmastery.currly",
       "packagingOptions": {
-        "exclude": ["META-INF/versions/9/OSGI-INF/MANIFEST.MF"]
+        "pickFirst": ["META-INF/versions/9/OSGI-INF/MANIFEST.MF"]
       }
     },
     "web": {
